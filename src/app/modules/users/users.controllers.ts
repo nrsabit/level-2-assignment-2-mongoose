@@ -94,9 +94,33 @@ const updateSingleUser = async (req: Request, res: Response) => {
   }
 };
 
+// deleting a user
+const deleteSingleUser = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const userIdNum = parseInt(userId);
+    await UserServices.deleteSingleUser(userIdNum);
+    res.status(200).json({
+      success: true,
+      message: 'User deleted successfully!',
+      data: null,
+    });
+  } catch (err) {
+    res.status(404).json({
+      success: false,
+      message: 'User not found',
+      error: {
+        code: 404,
+        description: 'User not found',
+      },
+    });
+  }
+};
+
 export const userControllers = {
   createUser,
   getAllUsers,
   getSingleUser,
   updateSingleUser,
+  deleteSingleUser,
 };
