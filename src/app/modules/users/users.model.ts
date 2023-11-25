@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import { TAddress, TFullName, TOrder, TUser } from './users.interface';
+import bcrypt from 'bcrypt';
+import config from '../../config';
 const { Schema, model } = mongoose;
 
 const FullNameSchema = new Schema<TFullName>({
@@ -38,6 +40,21 @@ const UserSchema = new Schema<TUser>({
   hobbies: { type: [String], required: [true, 'Hobbies are required'] },
   address: { type: AddressSchema, required: true },
   orders: OrderSchema,
+});
+
+// pre hook, to encrypt the password before saving into the DB.
+UserSchema.pre('save', async function (next) {
+  this.password = await bcrypt.hash(
+    this.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+  next();
+});
+
+// post hook to remove the password while getting the response from Db after user creation.
+UserSchema.post('save', async (data, next) => {
+  data.password = '';
+  next();
 });
 
 export const UserModel = model<TUser>('User', UserSchema);
