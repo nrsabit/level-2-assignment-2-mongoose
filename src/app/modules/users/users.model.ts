@@ -63,16 +63,10 @@ UserSchema.post('save', async (data, next) => {
   next();
 });
 
-// post hook to remove the password while getting the response from Db after single user retrieve.
-UserSchema.post('findOne', async function (doc, next) {
-  doc.password = '';
-  next();
-});
-
 // defining the custom static method to check the user is exists in Db or not.
 UserSchema.statics.isUserExists = async (userId: string) => {
   const userIdNum = parseInt(userId);
-  const existingUser = await UserModel.findOne({ userId: userIdNum });
+  const existingUser = await UserModel.findOne({ userId: userIdNum }, {password : 0, _id : 0});
   return existingUser;
 };
 

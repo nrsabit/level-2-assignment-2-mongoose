@@ -56,10 +56,40 @@ const getSingleUser = async (req: Request, res: Response) => {
     res.status(404).json({
       success: false,
       message: 'User not found',
-      error : {
-        code : 404,
-        description : 'User not found'
-      }
+      error: {
+        code: 404,
+        description: 'User not found',
+      },
+    });
+  }
+};
+
+// update a single user.
+const updateSingleUser = async (req: Request, res: Response) => {
+  try {
+    const updatedInfo = req.body;
+    const { userId } = req.params;
+    const userIdNum = parseInt(userId);
+    // zod validation.
+    const zodValidatedData = UserValidationSchema.parse(updatedInfo);
+    // creating the user into DB
+    const result = await UserServices.updateSingleUserInDb(
+      userIdNum,
+      zodValidatedData,
+    );
+    res.status(200).json({
+      success: true,
+      message: 'User updated successfully!',
+      data: result,
+    });
+  } catch (err) {
+    res.status(404).json({
+      success: false,
+      message: 'User not found',
+      error: {
+        code: 404,
+        description: 'User not found',
+      },
     });
   }
 };
@@ -67,5 +97,6 @@ const getSingleUser = async (req: Request, res: Response) => {
 export const userControllers = {
   createUser,
   getAllUsers,
-  getSingleUser
+  getSingleUser,
+  updateSingleUser,
 };
