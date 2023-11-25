@@ -168,6 +168,29 @@ const getAllOrders = async (req: Request, res: Response) => {
   }
 };
 
+// controller to get sum of all orders. 
+const getSumOfAllOrders = async(req : Request, res : Response) => {
+  try{
+    const {userId} = req.params
+    const userIdNum = parseInt(userId)
+    const result = await UserServices.getSumOfAllOrdersFromUser(userIdNum)
+    res.status(200).json({
+      success: true,
+      message: 'Total price calculated successfully!',
+      data: {totalPrice : result[0].totalPrice},
+    });
+  }catch(err : any){
+    res.status(404).json({
+      success: false,
+      message: err.message,
+      error: {
+        code: 404,
+        description: err.message,
+      },
+    });
+  }
+}
+
 export const userControllers = {
   createUser,
   getAllUsers,
@@ -176,4 +199,5 @@ export const userControllers = {
   deleteSingleUser,
   addNewOrder,
   getAllOrders,
+  getSumOfAllOrders
 };

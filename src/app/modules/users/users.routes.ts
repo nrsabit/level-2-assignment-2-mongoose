@@ -11,5 +11,6 @@ router.put('/:userId', userControllers.updateSingleUser); // to update a single 
 router.delete('/:userId', userControllers.deleteSingleUser); // to delete a single user from DB
 router.put('/:userId/orders', userControllers.addNewOrder); // to add a new order for a user
 router.get('/:userId/orders', userControllers.getAllOrders); // to retrieve all orders from a user
+router.get('/:userId/orders/total-price', userControllers.getSumOfAllOrders); // to get sum of all order prices
 
 export const userRoutes = router;

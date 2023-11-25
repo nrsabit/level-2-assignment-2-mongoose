@@ -70,4 +70,11 @@ UserSchema.statics.isUserExists = async (userId: string) => {
   return existingUser;
 };
 
+// checking the user exists or not by using aggregate. 
+UserSchema.statics.isUserAvailable = async (userId : string) => {
+  const userIdNum = parseInt(userId);
+  const existingUser = await UserModel.aggregate([{$match: {userId : {$eq: userIdNum}}}]);
+  return existingUser;
+}
+
 export const UserModel = model<TUser, UserStaticModel>('User', UserSchema);

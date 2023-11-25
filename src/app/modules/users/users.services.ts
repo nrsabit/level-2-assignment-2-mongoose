@@ -78,19 +78,39 @@ const addNewOrderInDB = async (userId: number, orderInfo: TOrder) => {
 
 // get all orders from a user.
 const getAllOrdersFromUser = async (userId: number) => {
-  const existingUser = await UserModel.aggregate([{$match: {userId : {$eq: userId}}}])
-
-  if(existingUser[0]){
-    if(existingUser[0].orders){
-      const result = existingUser[0].orders
-      return result
-    }else{
-      throw new Error('No orders available for the user')
+  const [existingUser] = await UserModel.isUserAvailable(userId.toString());
+  if (existingUser) {
+    if (existingUser.orders) {
+      const result = existingUser.orders;
+      return result;
+    } else {
+      throw new Error('No orders available for the user');
     }
-  }else{
-    throw new Error('User not found')
+  } else {
+    throw new Error('User not found');
   }
 };
+
+// get sum of all orders price for a user.
+const getSumOfAllOrdersFromUser = async (userId: number) => {
+  const [existingUser] = await UserModel.isUserAvailable(userId.toString());
+  if (existingUser) {
+    if (existingUser.orders) {
+      const result = await UserModel.aggregate([
+        { $match: { userId: { $eq: userId } } },
+        { $unwind: '$orders' },
+        { $group: { _id : null, totalPrice : {$sum : "$orders.price"} } },
+      ]);
+      return result;
+    } else {
+      throw new Error('No orders available for the user');
+    }
+  } else {
+    throw new Error('User not found');
+  }
+};
+
+//
 
 export const UserServices = {
   createUserInDB,
@@ -99,5 +119,6 @@ export const UserServices = {
   updateSingleUserInDb,
   deleteSingleUserInDb,
   addNewOrderInDB,
-  getAllOrdersFromUser
+  getAllOrdersFromUser,
+  getSumOfAllOrdersFromUser,
 };

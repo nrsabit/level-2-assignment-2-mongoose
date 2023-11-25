@@ -30,8 +30,8 @@ export type TUser = {
   orders?: TOrder[];
 };
 
-
-// custom static method to cchek the user is exists or not. 
+// custom static method to cchek the user is exists or not.
 export interface UserStaticModel extends Model<TUser> {
   isUserExists(userId: string): Promise<TUser | null>;
+  isUserAvailable(userId: string): Promise<[TUser] | []>;
 }
