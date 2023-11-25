@@ -1,4 +1,4 @@
-import { TUser } from './users.interface';
+import { TOrder, TUser } from './users.interface';
 import { UserModel } from './users.model';
 
 // creating a new user in DB
@@ -44,7 +44,7 @@ const updateSingleUserInDb = async (userId: number, updatedInfo: TUser) => {
 };
 
 // delete a user from Db
-const deleteSingleUser = async (userId : number) => {
+const deleteSingleUserInDb = async (userId : number) => {
   if(await UserModel.isUserExists(userId.toString())){
     const result = await UserModel.deleteOne({userId})
     return result
@@ -53,10 +53,27 @@ const deleteSingleUser = async (userId : number) => {
   }
 }
 
+// add an order for a user in Db. 
+const addNewOrderInDB = async (userId : number, orderInfo : TOrder) =>{
+  const existingUser = await UserModel.isUserExists(userId.toString())
+  if (existingUser) {
+    if("orders" in existingUser){
+      const result = await UserModel.updateOne({userId}, {$push: {orders : orderInfo}})
+      return result
+    }else{
+      const result = await UserModel.updateOne({userId}, {orders : [orderInfo]})
+      return result
+    }
+  } else {
+    throw new Error();
+  }
+}
+
 export const UserServices = {
   createUserInDB,
   getAllUsersFromDB,
   getSingleUserFromDB,
   updateSingleUserInDb,
-  deleteSingleUser
+  deleteSingleUserInDb,
+  addNewOrderInDB
 };

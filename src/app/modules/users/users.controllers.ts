@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
-import { UserValidationSchema } from './users.validation';
+import {
+  OrderValidationSchema,
+  UserValidationSchema,
+} from './users.validation';
 import { UserServices } from './users.services';
 
 // controller to create a new user in DB.
@@ -99,10 +102,35 @@ const deleteSingleUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const userIdNum = parseInt(userId);
-    await UserServices.deleteSingleUser(userIdNum);
+    await UserServices.deleteSingleUserInDb(userIdNum);
     res.status(200).json({
       success: true,
       message: 'User deleted successfully!',
+      data: null,
+    });
+  } catch (err) {
+    res.status(404).json({
+      success: false,
+      message: 'User not found',
+      error: {
+        code: 404,
+        description: 'User not found',
+      },
+    });
+  }
+};
+
+// controller for adding a new order for a user.
+const addNewOrder = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const userIdNum = parseInt(userId);
+    const orderInfo = req.body;
+    const zodValidatedOrder = OrderValidationSchema.parse(orderInfo);
+    await UserServices.addNewOrderInDB(userIdNum, zodValidatedOrder);
+    res.status(200).json({
+      success: true,
+      message: 'Order created successfully!',
       data: null,
     });
   } catch (err) {
@@ -123,4 +151,5 @@ export const userControllers = {
   getSingleUser,
   updateSingleUser,
   deleteSingleUser,
+  addNewOrder,
 };

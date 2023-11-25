@@ -17,7 +17,7 @@ const AddressValidationSchema = z.object({
     .min(1, { message: 'Country must be at least 1 character' }),
 });
 
-const OrderValidationSchema = z.object({
+export const OrderValidationSchema = z.object({
   productName: z
     .string()
     .min(1, { message: 'Product name must be at least 1 character' }),
