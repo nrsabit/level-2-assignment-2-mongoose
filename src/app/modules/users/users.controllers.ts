@@ -18,10 +18,10 @@ const createUser = async (req: Request, res: Response) => {
       message: 'User created successfully!',
       data: result,
     });
-  } catch (err) {
+  } catch (err : any) {
     res.status(500).json({
       success: false,
-      message: 'User was not created',
+      message: err.message,
       data: err,
     });
   }
@@ -85,13 +85,13 @@ const updateSingleUser = async (req: Request, res: Response) => {
       message: 'User updated successfully!',
       data: result,
     });
-  } catch (err) {
+  } catch (err : any) {
     res.status(404).json({
       success: false,
-      message: 'User not found',
+      message: err.message,
       error: {
         code: 404,
-        description: 'User not found',
+        description: err.message,
       },
     });
   }
@@ -108,13 +108,13 @@ const deleteSingleUser = async (req: Request, res: Response) => {
       message: 'User deleted successfully!',
       data: null,
     });
-  } catch (err) {
+  } catch (err : any) {
     res.status(404).json({
       success: false,
-      message: 'User not found',
+      message: err.message,
       error: {
         code: 404,
-        description: 'User not found',
+        description: err.message,
       },
     });
   }
@@ -133,13 +133,13 @@ const addNewOrder = async (req: Request, res: Response) => {
       message: 'Order created successfully!',
       data: null,
     });
-  } catch (err) {
+  } catch (err : any) {
     res.status(404).json({
       success: false,
-      message: 'User not found',
+      message: err.message,
       error: {
         code: 404,
-        description: 'User not found',
+        description: err.message,
       },
     });
   }

@@ -4,7 +4,8 @@ import { UserModel } from './users.model';
 // creating a new user in DB
 const createUserInDB = async (userInfo: TUser) => {
   const result = await UserModel.create(userInfo);
-  return result;
+  const userWithOutPass = await UserModel.findOne({userId : result.userId}, {password : 0, _id : 0})
+  return userWithOutPass;
 };
 
 // getting all users from DB
@@ -39,7 +40,7 @@ const updateSingleUserInDb = async (userId: number, updatedInfo: TUser) => {
       return updatedUser;
     }
   } else {
-    throw new Error();
+    throw new Error('User not found');
   }
 };
 
@@ -49,14 +50,13 @@ const deleteSingleUserInDb = async (userId: number) => {
     const result = await UserModel.deleteOne({ userId });
     return result;
   } else {
-    throw new Error();
+    throw new Error('User not found');
   }
 };
 
 // add an order for a user in Db.
 const addNewOrderInDB = async (userId: number, orderInfo: TOrder) => {
   const existingUser = await UserModel.isUserExists(userId.toString());
-  console.log(existingUser, 'from order creation');
   if (existingUser) {
     if ('orders' in existingUser) {
       const result = await UserModel.updateOne(

@@ -57,12 +57,6 @@ UserSchema.pre('save', async function (next) {
   next();
 });
 
-// post hook to remove the password while getting the response from Db after user creation.
-UserSchema.post('save', async (data, next) => {
-  data.password = '';
-  next();
-});
-
 // defining the custom static method to check the user is exists in Db or not.
 UserSchema.statics.isUserExists = async (userId: string) => {
   const userIdNum = parseInt(userId);
