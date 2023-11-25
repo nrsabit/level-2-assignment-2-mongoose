@@ -1,5 +1,11 @@
 import mongoose from 'mongoose';
-import { TAddress, TFullName, TOrder, TUser } from './users.interface';
+import {
+  TAddress,
+  TFullName,
+  TOrder,
+  TUser,
+  UserStaticModel,
+} from './users.interface';
 import bcrypt from 'bcrypt';
 import config from '../../config';
 const { Schema, model } = mongoose;
@@ -21,7 +27,7 @@ const OrderSchema = new Schema<TOrder>({
   quantity: { type: Number, required: [true, 'Quantity is Required'] },
 });
 
-const UserSchema = new Schema<TUser>({
+const UserSchema = new Schema<TUser, UserStaticModel>({
   userId: {
     type: Number,
     required: [true, 'User Id is required'],
@@ -57,4 +63,17 @@ UserSchema.post('save', async (data, next) => {
   next();
 });
 
-export const UserModel = model<TUser>('User', UserSchema);
+// post hook to remove the password while getting the response from Db after single user retrieve.
+UserSchema.post('findOne', async function (doc, next) {
+  doc.password = '';
+  next();
+});
+
+// defining the custom static method to check the user is exists in Db or not.
+UserSchema.statics.isUserExists = async (userId: string) => {
+  const userIdNum = parseInt(userId);
+  const existingUser = await UserModel.findOne({ userId: userIdNum });
+  return existingUser;
+};
+
+export const UserModel = model<TUser, UserStaticModel>('User', UserSchema);

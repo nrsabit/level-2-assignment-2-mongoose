@@ -1,3 +1,5 @@
+import { Model } from 'mongoose';
+
 export type TFullName = {
   firstName: string;
   lastName: string;
@@ -27,3 +29,9 @@ export type TUser = {
   address: TAddress;
   orders?: TOrder[];
 };
+
+
+// custom static method to cchek the user is exists or not. 
+export interface UserStaticModel extends Model<TUser> {
+  isUserExists(userId: string): Promise<TUser | null>;
+}
