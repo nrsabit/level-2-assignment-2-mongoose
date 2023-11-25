@@ -44,30 +44,53 @@ const updateSingleUserInDb = async (userId: number, updatedInfo: TUser) => {
 };
 
 // delete a user from Db
-const deleteSingleUserInDb = async (userId : number) => {
-  if(await UserModel.isUserExists(userId.toString())){
-    const result = await UserModel.deleteOne({userId})
-    return result
-  }else{
-    throw new Error()
-  }
-}
-
-// add an order for a user in Db. 
-const addNewOrderInDB = async (userId : number, orderInfo : TOrder) =>{
-  const existingUser = await UserModel.isUserExists(userId.toString())
-  if (existingUser) {
-    if("orders" in existingUser){
-      const result = await UserModel.updateOne({userId}, {$push: {orders : orderInfo}})
-      return result
-    }else{
-      const result = await UserModel.updateOne({userId}, {orders : [orderInfo]})
-      return result
-    }
+const deleteSingleUserInDb = async (userId: number) => {
+  if (await UserModel.isUserExists(userId.toString())) {
+    const result = await UserModel.deleteOne({ userId });
+    return result;
   } else {
     throw new Error();
   }
-}
+};
+
+// add an order for a user in Db.
+const addNewOrderInDB = async (userId: number, orderInfo: TOrder) => {
+  const existingUser = await UserModel.isUserExists(userId.toString());
+  console.log(existingUser, 'from order creation');
+  if (existingUser) {
+    if ('orders' in existingUser) {
+      const result = await UserModel.updateOne(
+        { userId },
+        { $push: { orders: orderInfo } },
+      );
+      return result;
+    } else {
+      const result = await UserModel.updateOne(
+        { userId },
+        { orders: [orderInfo] },
+      );
+      return result;
+    }
+  } else {
+    throw new Error('User not found');
+  }
+};
+
+// get all orders from a user.
+const getAllOrdersFromUser = async (userId: number) => {
+  const existingUser = await UserModel.aggregate([{$match: {userId : {$eq: userId}}}])
+
+  if(existingUser[0]){
+    if(existingUser[0].orders){
+      const result = existingUser[0].orders
+      return result
+    }else{
+      throw new Error('No orders available for the user')
+    }
+  }else{
+    throw new Error('User not found')
+  }
+};
 
 export const UserServices = {
   createUserInDB,
@@ -75,5 +98,6 @@ export const UserServices = {
   getSingleUserFromDB,
   updateSingleUserInDb,
   deleteSingleUserInDb,
-  addNewOrderInDB
+  addNewOrderInDB,
+  getAllOrdersFromUser
 };

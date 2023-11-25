@@ -10,5 +10,6 @@ router.get('/:userId', userControllers.getSingleUser); // to retrieve a single u
 router.put('/:userId', userControllers.updateSingleUser); // to update a single user in DB
 router.delete('/:userId', userControllers.deleteSingleUser); // to delete a single user from DB
 router.put('/:userId/orders', userControllers.addNewOrder); // to add a new order for a user
+router.get('/:userId/orders', userControllers.getAllOrders); // to retrieve all orders from a user
 
 export const userRoutes = router;

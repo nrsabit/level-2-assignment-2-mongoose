@@ -145,6 +145,29 @@ const addNewOrder = async (req: Request, res: Response) => {
   }
 };
 
+//controller method to get all orders from a user.
+const getAllOrders = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const userIdNum = parseInt(userId);
+    const result = await UserServices.getAllOrdersFromUser(userIdNum);
+    res.status(200).json({
+      success: true,
+      message: 'Order fetched successfully!',
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(404).json({
+      success: false,
+      message: err.message,
+      error: {
+        code: 404,
+        description: err.message,
+      },
+    });
+  }
+};
+
 export const userControllers = {
   createUser,
   getAllUsers,
@@ -152,4 +175,5 @@ export const userControllers = {
   updateSingleUser,
   deleteSingleUser,
   addNewOrder,
+  getAllOrders,
 };
